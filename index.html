@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChemGL - Interactive Atomic Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/theme.js"></script>
+  </head>
+
+  <body>
+    <canvas id="atomCanvas"></canvas>
+
+    <div id="header">
+      <div id="brand">
+        <div id="brand-mark">✚</div>
+        <div id="brand-text">
+          <h1>ChemGL</h1>
+          <div>Interactive Atomic Builder</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="right-clear">
+      <button
+        id="theme-toggle"
+        class="icon-btn"
+        type="button"
+        aria-label="Switch to light theme"
+        aria-pressed="true"
+        title="Switch theme"
+      >
+        ☼
+      </button>
+
+      <button id="btn-clear">Clear</button>
+    </div>
+
+    <div id="legend">
+      <div class="legend-title">Particles</div>
+      <div class="legend-item">
+        <div class="legend-dot legend-dot--proton"></div>
+        Proton
+        <span class="count" id="cnt-protons">0</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot legend-dot--neutron"></div>
+        Neutron
+        <span class="count" id="cnt-neutrons">0</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot legend-dot--electron"></div>
+        Electron
+        <span class="count" id="cnt-electrons">0</span>
+      </div>
+      <div class="tip-box">
+        Drag particles to add them to the atom. Click proton/neutron to quickly
+        add to the nucleus.
+      </div>
+
+      <div class="control-group" aria-label="Simulation controls">
+        <div class="control-row">
+          <div class="control-label">Electron speed</div>
+          <div class="control-value" id="electron-speed-value">1.00×</div>
+        </div>
+        <input
+          class="range"
+          id="electron-speed"
+          type="range"
+          min="0"
+          max="300"
+          value="100"
+          step="1"
+          aria-label="Electron speed"
+        />
+      </div>
+    </div>
+
+    <div id="info-panel">
+      <div class="panel-title">Element Data</div>
+      <div class="element-hero">
+        <div id="el-tile">
+          <div id="el-atomic-number">—</div>
+          <div id="el-symbol">?</div>
+          <div id="el-name">Unknown</div>
+        </div>
+        <div id="el-meta">
+          <div id="el-category-pill" class="category-pill cat-unknown">
+            No category
+          </div>
+          <div id="el-family-desc">Build an atom to view element details.</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="info-row">
+        <span class="label">Protons</span>
+        <span class="value" id="el-protons">0</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Neutrons</span>
+        <span class="value" id="el-neutrons">0</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Electrons</span>
+        <span class="value" id="el-electrons">0</span>
+      </div>
+      <div class="divider"></div>
+      <div class="info-row">
+        <span class="label">Atomic Mass</span>
+        <span class="value" id="el-mass">0</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Net Charge</span>
+        <span class="value neutral" id="el-charge">Neutral</span>
+      </div>
+      <div class="divider"></div>
+      <div class="shells-row">
+        Shell Config
+        <span id="el-shells">—</span>
+      </div>
+    </div>
+
+    <div id="ptable-panel">
+      <div class="panel-title">Periodic Table</div>
+      <div id="ptable-note">
+        Click any element to load a matching atom. Then add or remove particles
+        to refine it.
+      </div>
+      <div id="ptable-grid" aria-label="Periodic table"></div>
+    </div>
+
+    <div id="bins">
+      <div class="bin-wrapper bin-proton-wrap">
+        <div class="bin-label">Proton</div>
+        <div class="bin" id="bin-proton">
+          <div class="badge">
+            <div class="badge-inner">+</div>
+          </div>
+        </div>
+        <button class="rm-btn" id="btn-rm-proton" aria-label="Remove proton">
+          ×
+        </button>
+      </div>
+
+      <div class="bin-wrapper bin-neutron-wrap">
+        <div class="bin-label">Neutron</div>
+        <div class="bin" id="bin-neutron">
+          <div class="badge">
+            <div class="badge-inner">0</div>
+          </div>
+        </div>
+        <button class="rm-btn" id="btn-rm-neutron" aria-label="Remove neutron">
+          ×
+        </button>
+      </div>
+
+      <div class="bin-wrapper bin-electron-wrap">
+        <div class="bin-label">Electron</div>
+        <div class="bin" id="bin-electron">
+          <div class="badge">
+            <div class="badge-inner">−</div>
+          </div>
+        </div>
+        <button
+          class="rm-btn"
+          id="btn-rm-electron"
+          aria-label="Remove electron"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+
+    <div id="didyouknow">
+      <div id="didyouknow-header">
+        <div id="didyouknow-icon">💡</div>
+        <div>Did you know?</div>
+      </div>
+      <div id="didyouknow-text">
+        Loading a fact about the selected element...
+      </div>
+      <svg
+        id="didyouknow-leaves"
+        viewBox="0 0 64 64"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M34 54c10-3 17-11 19-22-9 1-17 5-22 13-2 3-4 6-5 9 3 1 5 1 8 0Z"
+          fill="#89cb6f"
+        />
+        <path
+          d="M23 56c-8-5-11-13-10-23 9 2 16 8 19 17 1 3 2 6 2 9-4 0-8-1-11-3Z"
+          fill="#a6d98f"
+        />
+        <path
+          d="M29 47c-2-9-1-19 5-29 7 7 9 16 7 25-1 4-3 7-5 10-3-2-5-3-7-6Z"
+          fill="#76bd5f"
+        />
+        <path
+          d="M40 42c8-2 14-8 17-16-7 0-13 2-18 7-2 2-3 4-4 7 2 1 3 1 5 2Z"
+          fill="#b6e2a0"
+        />
+      </svg>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
